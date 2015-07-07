@@ -21,7 +21,7 @@ The option can be found under `wp-admin/options-writing.php`
 > This plugin has been written for WordPress Multisite with a WordPress.com like environment in mind.
 >
 > Because of this, we want to give users full functionality and awesomeness with the least configuration.
-> If a user wishes to disable emojis, they can simply do so in their dashboard.
+> If a user wishes to disable emojis for their site, they can simply do so in their dashboard.
 
 = Translating =
 
