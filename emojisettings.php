@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Emoji Settings
- * Plugin URI: https://hostmijnpagina.nl/
+ * Plugin URI: https://wordpress.org/plugins/emoji-settings/
  * Description: Adds the option for the user in Writing Settings to enable or disable emoji output. Just like the "convert emoticons" setting. This option is enabled by default.
  * Author: Sybre Waaijer
  * Author URI: https://cyberwire.nl/

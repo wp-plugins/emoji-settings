@@ -7,7 +7,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Emoji Settings adds an option to your Writing Settings to disable emojis.
+Emoji Settings adds an option in your Writing Settings page to disable or enable emojis.
 
 == Description ==
 
