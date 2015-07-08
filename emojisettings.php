@@ -5,7 +5,7 @@
  * Description: Adds the option for the user in Writing Settings to enable or disable emoji output. Just like the "convert emoticons" setting. This option is enabled by default.
  * Author: Sybre Waaijer
  * Author URI: https://cyberwire.nl/
- * Version: 1.0.1
+ * Version: 1.0.2
  * Text Domain: emojisettings
  * License: GLPv2 or later
  */
@@ -46,7 +46,7 @@ class Emoji_Settings_Field {
 	 */
 	public function __construct() {
 		add_filter( 'admin_init' , array( &$this, 'register_fields' ) );
-		add_action( 'init', array( &$this, 'disable_emojis' ), 11 );
+		add_action( 'init', array( &$this, 'disable_emojis' ), 9 );
 		
 		//* Default settings
 		$this->options = array(
@@ -207,7 +207,7 @@ class Emoji_Settings_Field {
 			add_filter( 'tiny_mce_plugins', array( &$this, 'disable_emojis_tinymce' ) ); // Remove from tinymce
 		}
 	
-		/* 
+		/*
 		//Debugging
 		echo '<!--'; 
 		print_r( 'enable = ' . $enable . "\r\n" . 'disable = ' . $disable . "\r\n" . 'default = ' . $default . "\r\n" );
