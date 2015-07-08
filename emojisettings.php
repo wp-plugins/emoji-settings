@@ -5,7 +5,7 @@
  * Description: Adds the option for the user in Writing Settings to enable or disable emoji output. Just like the "convert emoticons" setting. This option is enabled by default.
  * Author: Sybre Waaijer
  * Author URI: https://cyberwire.nl/
- * Version: 1.0.0
+ * Version: 1.0.1
  * Text Domain: emojisettings
  * License: GLPv2 or later
  */
@@ -31,13 +31,101 @@ add_action('plugins_loaded', 'cw_emoji_settings_locale');
 class Emoji_Settings_Field {
 
 	/**
-	 * Class constructor
+	 * Settings array, providing defaults.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @var array Holds emoji settings
+	 */
+	protected $options = array();
+	
+	/**
+	 * Constructor. Makes my life brighter every day :)
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		add_filter( 'admin_init' , array( &$this, 'register_fields' ) );
-		add_action( 'init', array( &$this, 'disable_emojis' ) );
+		add_action( 'init', array( &$this, 'disable_emojis' ), 11 );
+		
+		//* Default settings
+		$this->options = array(
+			'default' 	=> '1',
+			'enable'	=> false,
+			'disable'	=> false,
+			);		
 	}
-
+	
+	/**
+	 * Return the compiled options.
+	 *
+	 * @since 1.0.1
+	 * 
+	 * @param array $options The options
+	 * @return array The Emoji options
+	 */
+	public function get_option( $options = array() ) {
+		
+		/**
+		 * Filter the Emoji options.
+		 *
+		 * @since 1.0.1
+		 *
+		 * @param array $options {
+		 *      Arguments for Emoji settings.
+		 *
+		 *      @type string 	$default		Turn global emoji output on or off by default before settings applied.
+		 *      @type bool 		$enable			Override the settings and turn the emojis on anyway.
+		 *      @type bool 		$disable		Override the settings and turn the emojis off anyway.
+		 * }
+		 */
+		$this->options = apply_filters( 'the_emoji_options', wp_parse_args( $options, $this->options ) );
+				
+		return $this->options;
+	}
+	
+	/**
+	 * Sanitize the options.
+	 * Prevents wrong filters. Overkill? Maybe. But makes sure the checks in the options below will work as intended.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @param array $options The options
+	 * return array Sanitized the emoji options
+	 */
+	protected function option( $options = array()) {
+		
+		$this->options = wp_parse_args( $options, $this->get_option() );
+				
+		if ( $this->options['default'] === '1' || $this->options['default'] === '0' ) {
+			// leave them as be
+		} else if ( $this->options['default'] === true ) {
+			$this->options['default'] = '1';
+		} else if ( $this->options['default'] === false ) {
+			$this->options['default'] = '0';
+		} else {
+			$this->options['default'] = '1';
+		}
+		
+		if ( empty( $this->options['enable'] ) ) {
+			$this->options['enable'] = false;
+		} else if ( $this->options['enable'] !== false ) {
+			$this->options['enable'] = true;
+		} else {
+			$this->options['enable'] = false;
+		}
+		
+		if ( empty( $this->options['disable'] ) ) {
+			$this->options['disable'] = false;
+		} else if ( $this->options['disable'] !== false ) {
+			$this->options['disable'] = true;
+		} else {
+			$this->options['disable'] = false;
+		}
+		
+		return $this->options;
+	}
+	
 	/**
 	 * Add new fields to wp-admin/options-writing.php page
 	 *
@@ -60,16 +148,15 @@ class Emoji_Settings_Field {
 	 */
 	public function fields_html() {
 		
-		$option = get_option( 'enable_emoji', '1' );
+		$option = get_option( 'enable_emoji', $this->option()['default'] );
 		
 		?>
-			<fieldset><legend class="screen-reader-text"><span><?php _e( 'Emoji Support', 'emojisettings' ) ?></span></legend>
-			<label for="enable_emoji">
-				<input name="enable_emoji" type="checkbox" id="enable_emoji" value="1" <?php checked( '1', $option ); ?> />
-				<?php _e( 'Enable emoji support', 'emojisettings' ) ?>
-			</label>
-			</fieldset>
-		</tr>
+		<fieldset><legend class="screen-reader-text"><span><?php _e( 'Emoji Support', 'emojisettings' ) ?></span></legend>
+		<label for="enable_emoji">
+			<input name="enable_emoji" type="checkbox" id="enable_emoji" value="1" <?php checked( '1', $option ); ?> />
+			<?php _e( 'Enable emoji support', 'emojisettings' ) ?>
+		</label>
+		</fieldset>
 		<?php
 	}
 	
@@ -82,26 +169,34 @@ class Emoji_Settings_Field {
 	 *
 	 * @uses disable_emojis_tinymce
 	 */	
-	public function disable_emojis() {
-		
+	public function disable_emojis( $options = array() ) {
+				
 		/**
 		 * Default the option to true if it's a new blog or the option page of the
 		 * blog hasn't been visited yet when this plugin has been activated so 
-		 * this doesn't undesireably prevent the emojis from being output.
-		 *
-		 * Overwrite this with the following filter, somewhere in your themes or plugins:
-		 * WARNING: do not use the following filter. It will render the option useless.
-		 * add_filter( 'pre_option_enable_emoji', array( 'Emoji_Settings_Field', '__return_false' );
-		 * The filter above doesn't work as intended. Will create a better filter in a future update.
-		 */		
-		$option = get_option( 'enable_emoji', '1' );
-				
+		 * this doesn't undesireably prevent/'unprevent' the emojis from being output.
+		 */
+		$option = get_option( 'enable_emoji', $default = $this->option()['default'] );
+		
 		/**
-		 * If the emoji settings is set to off: remove the emoji scripts and other settings.
+		 * Enable it anyway if true (Default is false)
+		 */
+		$enable = $this->option()['enable']; 
+		
+		/**
+		 * Disable it anyway if true (Default is false)
+		 */
+		$disable = $this->option()['disable'];
+		
+		/**
+		 * If the emoji settings is set to off:	remove the emoji scripts and other settings.
+		 *
+		 * If the enable value is set to true: 	Keep the emoji scripts output.
+		 * If the disable value is set to true: Remove the emoji scripts output.
 		 *
 		 * @since 1.0.0
-		 */
-		if ( $option !== '1' ) {
+		 */		
+		if ( $disable === true || ( $enable === false && $option !== '1' ) ) {
 			remove_action( 'wp_head', 'print_emoji_detection_script', 7 ); // Front-end browser support detection script
 			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' ); // Admin browser support detection script
 			remove_action( 'wp_print_styles', 'print_emoji_styles' ); // Emoji styles
@@ -111,6 +206,19 @@ class Emoji_Settings_Field {
 			remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' ); // Remove from mail
 			add_filter( 'tiny_mce_plugins', array( &$this, 'disable_emojis_tinymce' ) ); // Remove from tinymce
 		}
+	
+		/* 
+		//Debugging
+		echo '<!--'; 
+		print_r( 'enable = ' . $enable . "\r\n" . 'disable = ' . $disable . "\r\n" . 'default = ' . $default . "\r\n" );
+		echo 'enable: '; var_dump( $enable );
+		echo 'disable: '; var_dump( $disable );
+		echo 'default: '; var_dump( $default );
+		echo 'option: '; var_dump( $option );
+		echo 'debugging: 9';
+		echo '-->';
+		*/
+	
 	}
 	
 	/**
