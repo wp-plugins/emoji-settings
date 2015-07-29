@@ -5,7 +5,7 @@
  * Description: Adds the option for the user in Writing Settings to enable or disable emoji output. Just like the "convert emoticons" setting. This option is enabled by default.
  * Author: Sybre Waaijer
  * Author URI: https://cyberwire.nl/
- * Version: 1.0.3
+ * Version: 1.0.4
  * Text Domain: emojisettings
  * License: GLPv2 or later
  */
@@ -149,12 +149,13 @@ class Emoji_Settings_Field {
 	 */
 	public function fields_html() {
 		
-		$option = get_option( 'enable_emoji', $this->option()['default'] );
+		$option = $this->option();
+		$enable = get_option( 'enable_emoji', $option['default'] );
 		
 		?>
 		<fieldset><legend class="screen-reader-text"><span><?php _e( 'Emoji Support', 'emojisettings' ) ?></span></legend>
 		<label for="enable_emoji">
-			<input name="enable_emoji" type="checkbox" id="enable_emoji" value="1" <?php checked( '1', $option ); ?> />
+			<input name="enable_emoji" type="checkbox" id="enable_emoji" value="1" <?php checked( '1', $enable ); ?> />
 			<?php _e( 'Enable emoji support', 'emojisettings' ) ?>
 		</label>
 		</fieldset>
@@ -169,23 +170,25 @@ class Emoji_Settings_Field {
 	 * @uses disable_emojis_tinymce
 	 */	
 	public function disable_emojis( $options = array() ) {
-				
+		
+		$option = $this->option();
+		
 		/**
 		 * Default the option to true if it's a new blog or the option page of the
 		 * blog hasn't been visited yet when this plugin has been activated so 
 		 * this doesn't undesireably prevent/'unprevent' the emojis from being output.
 		 */
-		$option = get_option( 'enable_emoji', $default = $this->option()['default'] );
+		$default = get_option( 'enable_emoji', $default = $option['default'] );
 		
 		/**
 		 * Enable it anyway if true (Default is false)
 		 */
-		$enable = $this->option()['enable']; 
+		$enable = $option['enable']; 
 		
 		/**
 		 * Disable it anyway if true (Default is false)
 		 */
-		$disable = $this->option()['disable'];
+		$disable = $option['disable'];
 		
 		/**
 		 * If the emoji settings is set to off:	remove the emoji scripts and other settings.
@@ -197,7 +200,7 @@ class Emoji_Settings_Field {
 		 * 
 		 * @credits https://wordpress.org/plugins/disable-emojis/
 		 */		
-		if ( $disable === true || ( $enable === false && $option !== '1' ) ) {
+		if ( $disable === true || ( $enable === false && $default !== '1' ) ) {
 			remove_action( 'wp_head', 'print_emoji_detection_script', 7 ); // Front-end browser support detection script
 			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' ); // Admin browser support detection script
 			remove_action( 'wp_print_styles', 'print_emoji_styles' ); // Emoji styles

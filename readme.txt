@@ -2,8 +2,8 @@
 Contributors: Cybr
 Tags: emoji, enable, disable, option, writing, emoticon, script, print, tinymce, admin, frontend, mail, filter, settings
 Requires at least: 4.2.0
-Tested up to: 4.2.2
-Stable tag: 1.0.3
+Tested up to: 4.2.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ This plugin is fully translated to Dutch. If you wish to submit a translation, p
 1. That's it! Enjoy!
 
 == Changelog ==
+
+= 1.0.4 =
+* This plugin now supports PHP 5.2 and up
 
 = 1.0.3 =
 * Now correctly removes scripts from admin pages
