@@ -55,8 +55,7 @@ This plugin is fully translated to Dutch. If you wish to submit a translation, p
 
 == Filters ==
 
-There's only one filter for this plugin.
-these filter changes the default settings of Emoji Settings.
+There's only one filter for this plugin, this filter changes the default settings of Emoji Settings.
 
 Add any of these filter functions to your theme functions.php or template file.
 Or a seperate plugin.
@@ -71,18 +70,18 @@ function my_default_emoji_settings( $options ) {
 	// Set this to 1 or 0 to enable or disable Emoji output by default. Great for multisite installations.
 	// Default is 1.
 	$options['default'] = '0';
-		
+
 	return $options;
 }`
 
 `//* Override the emoji setting and disable output, example
 add_filter( 'the_emoji_options', 'my_disable_emoji' );
-function my_disable_emoji( $options ) {	
+function my_disable_emoji( $options ) {
 	// Set this to true to disable emoji output anyway regardless of other settings. Set to false to rely on the option in the Writing Settings page.
 	// Default is false
 	// Example: Disable emojis on home page regardless of settings.
 	$options['disable'] = true;
-	
+
 	return $options;
 }`
 
@@ -93,6 +92,6 @@ function my_postpage_emoji_function( $options ) {
 	// Default is false
 	// Example: Enable emoji's on Post type pages regardless of settings.
 	$options['enable'] = true;
-	
+
 	return $options;
 }`
