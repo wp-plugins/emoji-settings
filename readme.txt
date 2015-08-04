@@ -61,6 +61,7 @@ Add any of these filter functions to your theme functions.php or template file.
 Or a seperate plugin.
 
 **I couldn't get is_single, is_home, etc. checks to work with this filter, so don't bother trying that for now :) use as described below.**
+**You could however add any of these filters to any of your templates to get the desired result described above. It depends however if your theme supports that, of course.**
 *You could also combine the options['key'], but I don't see a reason to do so*
 
 `//* Modify Default Emoji settings, example
