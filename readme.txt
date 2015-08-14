@@ -2,7 +2,7 @@
 Contributors: Cybr
 Tags: emoji, enable, disable, option, writing, emoticon, script, print, tinymce, admin, frontend, mail, filter, settings
 Requires at least: 4.2.0
-Tested up to: 4.2.3
+Tested up to: 4.3.0
 Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -71,18 +71,18 @@ function my_default_emoji_settings( $options ) {
 	// Set this to 1 or 0 to enable or disable Emoji output by default. Great for multisite installations.
 	// Default is 1.
 	$options['default'] = '0';
-		
+
 	return $options;
 }`
 
 `//* Override the emoji setting and disable output, example
 add_filter( 'the_emoji_options', 'my_disable_emoji' );
-function my_disable_emoji( $options ) {	
+function my_disable_emoji( $options ) {
 	// Set this to true to disable emoji output anyway regardless of other settings. Set to false to rely on the option in the Writing Settings page.
 	// Default is false
 	// Example: Disable emojis on home page regardless of settings.
 	$options['disable'] = true;
-	
+
 	return $options;
 }`
 
@@ -93,6 +93,6 @@ function my_postpage_emoji_function( $options ) {
 	// Default is false
 	// Example: Enable emoji's on Post type pages regardless of settings.
 	$options['enable'] = true;
-	
+
 	return $options;
 }`
